@@ -140,6 +140,7 @@ class StreamingService : Service(), StreamControlHandler {
                 delay(3000)
                 val a = adaptive ?: continue
                 val (slow, total) = StreamStats.drainSlows()
+                if (camera.controls.torch) continue
                 val before = a.fps to a.quality
                 a.onWindow(slow, total, broadcaster.clientCount())
                 if (before != a.fps to a.quality) {

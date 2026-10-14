@@ -344,15 +344,11 @@ class CameraController(
         controls.torch = on
         val id = cameraId ?: chooseCameraId(front)
         if (session != null) {
-            // Một số HAL có xu hướng tắt torch tự động khi request preview được rebuild
-            // nhiều lần. Chúng ta vẫn giữ state yêu cầu và chỉ cập nhật lại preview
-            // nếu state thật sự thay đổi để tránh nháy đèn do lặp vô ích.
+            // When a capture session owns the camera, torch must be controlled only
+            // through its repeating request. Calling setTorchMode here can interrupt
+            // the session on some devices.
             Log.i(TAG, "setTorch(in-session) on=$on")
             updateRepeating()
-            if (id != null) {
-                runCatching { manager.setTorchMode(id, on) }
-                    .onFailure { Log.w(TAG, "setTorchMode fallback failed", it) }
-            }
         } else {
             if (id == null) {
                 Log.w(TAG, "setTorch on=$on but no camera id")
