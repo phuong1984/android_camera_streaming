@@ -1,0 +1,26 @@
+<resources>
+    <string-array name="resolution_entries">
+        <item>QVGA 320x240</item>
+        <item>VGA 640x480</item>
+        <item>SVGA 800x600</item>
+        <item>HD 1280x720</item>
+    </string-array>
+    <string-array name="resolution_values">
+        <item>320x240</item>
+        <item>640x480</item>
+        <item>800x600</item>
+        <item>1280x720</item>
+    </string-array>
+    <string-array name="fps_entries">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+    </string-array>
+    <string-array name="fps_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+    </string-array>
+</resources>

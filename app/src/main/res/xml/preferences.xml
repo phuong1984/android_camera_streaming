@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:iconSpaceReserved="false">
+
+    <PreferenceCategory
+        android:title="Mạng"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:key="port"
+            android:title="Cổng (port)"
+            android:defaultValue="8081"
+            android:inputType="number"
+            android:dialogTitle="Cổng HTTP (mặc định 8081)"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Video"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:key="resolution"
+            android:title="Độ phân giải"
+            android:entries="@array/resolution_entries"
+            android:entryValues="@array/resolution_values"
+            android:defaultValue="640x480"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:key="fps"
+            android:title="FPS"
+            android:entries="@array/fps_entries"
+            android:entryValues="@array/fps_values"
+            android:defaultValue="15"
+            app:iconSpaceReserved="false" />
+
+        <SeekBarPreference
+            android:key="quality"
+            android:title="Chất lượng JPEG"
+            android:max="100"
+            android:defaultValue="80"
+            app:min="10"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="autoFramesize"
+            android:title="Tự động hạ chất lượng/FPS"
+            android:summary="Khi mạng yếu"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Nền &amp; pin"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="keepWarm"
+            android:title="Giữ camera luôn bật"
+            android:summary="Không tự dừng khi idle"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="autostart"
+            android:title="Tự chạy khi khởi động máy"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="battery_opt"
+            android:title="Miễn tối ưu pin"
+            android:summary="Bắt buộc trên Xiaomi/Oppo để chạy nền ổn định"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="oem_autostart"
+            android:title="Mở cài đặt Autostart của hãng"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

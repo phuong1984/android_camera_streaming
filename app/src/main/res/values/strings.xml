@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">IP Camera</string>
+    <string name="main_title">IP Camera Streaming</string>
+    <string name="start_streaming">Bắt đầu streaming</string>
+    <string name="stop_streaming">Dừng streaming</string>
+    <string name="settings">Cài đặt</string>
+    <string name="status_running">Đang chạy</string>
+    <string name="status_stopped">Đã dừng</string>
+    <string name="label_ip">Địa chỉ</string>
+    <string name="label_clients">Số client</string>
+    <string name="toggle_flash">Flash</string>
+    <string name="toggle_night">Nhìn đêm</string>
+    <string name="switch_camera">Đổi camera</string>
+    <string name="camera_rear">Sau</string>
+    <string name="camera_front">Trước</string>
+    <string name="permission_needed">Cần quyền Camera và Thông báo</string>
+    <string name="battery_opt">Miễn tối ưu pin</string>
+    <string name="open_autostart">Mở cài đặt autostart</string>
+    <string name="notification_channel">Streaming camera</string>
+    <string name="notification_title">IP Camera đang stream</string>
+    <string name="notification_text">Camera đang phục vụ trên cổng %1$d</string>
+</resources>
