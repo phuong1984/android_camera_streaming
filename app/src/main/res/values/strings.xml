@@ -10,6 +10,7 @@
     <string name="label_clients">Số client</string>
     <string name="toggle_flash">Flash</string>
     <string name="toggle_night">Nhìn đêm</string>
+    <string name="toggle_preview">Xem trước</string>
     <string name="switch_camera">Đổi camera</string>
     <string name="camera_rear">Sau</string>
     <string name="camera_front">Trước</string>

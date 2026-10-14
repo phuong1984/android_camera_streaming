@@ -12,9 +12,11 @@ object IdlePolicy {
         graceMs: Long,
         keepWarm: Boolean,
         cameraRunning: Boolean,
+        previewActive: Boolean = false,
     ): Boolean {
         if (!cameraRunning) return false
         if (keepWarm) return false
+        if (previewActive) return false
         if (clientCount > 0) return false
         if (lastActivityMs <= 0L) return false
         return (nowMs - lastActivityMs) >= graceMs

@@ -50,4 +50,17 @@ class SettingsStoreTest {
         assertEquals(Resolution.VGA, Resolution.fromKey("640x480"))
         assertEquals(Resolution.SVGA, Resolution.nearest(800, 600))
     }
+
+    @Test
+    fun previewEnabled_defaultsToFalse() {
+        assertEquals(false, store.loadPreviewEnabled())
+    }
+
+    @Test
+    fun previewEnabled_save_thenLoad_roundTrips() {
+        store.savePreviewEnabled(true)
+        assertEquals(true, store.loadPreviewEnabled())
+        store.savePreviewEnabled(false)
+        assertEquals(false, store.loadPreviewEnabled())
+    }
 }

@@ -50,6 +50,7 @@ class StreamingService : Service(), StreamControlHandler {
         super.onCreate()
         store = SettingsStore(this)
         camera = CameraController(this, broadcaster)
+        StreamState.broadcaster = broadcaster
         createChannel()
     }
 
@@ -109,7 +110,8 @@ class StreamingService : Service(), StreamControlHandler {
                 val count = broadcaster.clientCount()
                 StreamState.notifyClients(count)
                 val now = System.currentTimeMillis()
-                if (count > 0) {
+                val preview = StreamState.previewActive.value == true
+                if (count > 0 || preview) {
                     lastClientSeenMs = now
                     if (!camera.isRunning) camera.start(front = StreamState.frontCamera.value ?: false)
                 } else {
@@ -120,6 +122,7 @@ class StreamingService : Service(), StreamControlHandler {
                         graceMs = live.idleGraceSeconds * 1000L,
                         keepWarm = live.keepWarm,
                         cameraRunning = camera.isRunning,
+                        previewActive = preview,
                     )
                     if (stop) {
                         camera.stop()
@@ -160,6 +163,7 @@ class StreamingService : Service(), StreamControlHandler {
         StreamState.notifyClients(0)
         StreamState.notifyAddress("")
         StreamState.torchOn.postValue(false)
+        StreamState.previewActive.postValue(false)
     }
 
     // ---- StreamControlHandler ----
@@ -184,8 +188,15 @@ class StreamingService : Service(), StreamControlHandler {
             }
 
             is ControlAction.SetFlash -> {
-                camera.applyControl(action)
-                StreamState.torchOn.postValue(action.on)
+                val frontSelected = camera.front ||
+                    StreamState.frontCamera.value == true ||
+                    store.load().frontCamera
+                val shouldEnable = action.on && !frontSelected
+                if (action.on && frontSelected) {
+                    Log.w(TAG, "ignoring flash enable while front camera is selected")
+                }
+                camera.applyControl(ControlAction.SetFlash(shouldEnable))
+                StreamState.torchOn.postValue(shouldEnable)
             }
 
             is ControlAction.SetNight -> {
@@ -194,6 +205,10 @@ class StreamingService : Service(), StreamControlHandler {
             }
 
             is ControlAction.SetCameraFront -> {
+                if (action.front && camera.controls.torch) {
+                    camera.applyControl(ControlAction.SetFlash(false))
+                    StreamState.torchOn.postValue(false)
+                }
                 camera.applyControl(action)
                 StreamState.frontCamera.postValue(action.front)
             }
@@ -291,6 +306,7 @@ class StreamingService : Service(), StreamControlHandler {
 
     override fun onDestroy() {
         stopServer()
+        StreamState.broadcaster = null
         super.onDestroy()
     }
 

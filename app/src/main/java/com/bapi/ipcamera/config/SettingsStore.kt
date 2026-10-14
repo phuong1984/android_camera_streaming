@@ -38,4 +38,10 @@ class SettingsStore(context: Context) {
     fun reset() {
         prefs.edit().clear().commit()
     }
+
+    fun loadPreviewEnabled(): Boolean = prefs.getBoolean("previewEnabled", false)
+
+    fun savePreviewEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("previewEnabled", enabled).apply()
+    }
 }

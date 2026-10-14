@@ -42,6 +42,30 @@
             android:text=""
             android:textSize="16sp" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:minHeight="48dp"
+            android:text="@string/toggle_preview" />
+
+        <FrameLayout
+            android:id="@+id/previewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:background="#000000"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/toggle_preview"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
+
         <Button
             android:id="@+id/btnToggle"
             android:layout_width="match_parent"

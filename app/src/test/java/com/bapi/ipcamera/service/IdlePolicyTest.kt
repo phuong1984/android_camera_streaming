@@ -47,4 +47,13 @@ class IdlePolicyTest {
             IdlePolicy.shouldStopNow(0, 100_000, 999_000, 15_000, false, false)
         )
     }
+
+    @Test
+    fun neverStopsWhenPreviewActive() {
+        assertFalse(
+            IdlePolicy.shouldStopNow(
+                0, 100_000, 999_000, 15_000, false, true, previewActive = true
+            )
+        )
+    }
 }
