@@ -72,6 +72,7 @@ class StreamingService : Service(), StreamControlHandler {
     private fun applyServiceConfig() {
         val cfg = store.load()
         Log.i(TAG, "applyServiceConfig fps=${cfg.fps} q=${cfg.jpegQuality} ${cfg.width}x${cfg.height}")
+        StreamState.frontCamera.postValue(cfg.frontCamera)
         camera.updateConfig(cfg)
         adaptive = if (cfg.autoFramesize) {
             AdaptiveController(maxFps = cfg.fps, maxQuality = cfg.jpegQuality)
@@ -80,6 +81,7 @@ class StreamingService : Service(), StreamControlHandler {
 
     private fun startServer() {
         val cfg = store.load()
+        StreamState.frontCamera.postValue(cfg.frontCamera)
         camera.updateConfig(cfg)
         val server = HttpServer(cfg.port, broadcaster, this)
         try {
@@ -183,6 +185,11 @@ class StreamingService : Service(), StreamControlHandler {
             is ControlAction.SetFlash -> {
                 camera.applyControl(action)
                 StreamState.torchOn.postValue(action.on)
+            }
+
+            is ControlAction.SetNight -> {
+                camera.applyControl(action)
+                StreamState.notifyNight(action.on)
             }
 
             is ControlAction.SetCameraFront -> {

@@ -32,7 +32,7 @@ class SettingsStoreTest {
         store.save(
             StreamConfig(
                 port = 9000, width = 1280, height = 720, fps = 30,
-                jpegQuality = 70, autoFramesize = false
+                jpegQuality = 70, autoFramesize = false, frontCamera = true
             )
         )
         val c = store.load()
@@ -41,6 +41,7 @@ class SettingsStoreTest {
         assertEquals(30, c.fps)
         assertEquals(70, c.jpegQuality)
         assertEquals(false, c.autoFramesize)
+        assertEquals(true, c.frontCamera)
     }
 
     @Test

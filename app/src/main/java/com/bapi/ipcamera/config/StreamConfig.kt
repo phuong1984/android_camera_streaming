@@ -12,6 +12,7 @@ data class StreamConfig(
     val autostart: Boolean = false,
     val keepWarm: Boolean = false,
     val idleGraceSeconds: Int = 15,
+    val frontCamera: Boolean = false,
 )
 
 enum class Resolution(val w: Int, val h: Int) {

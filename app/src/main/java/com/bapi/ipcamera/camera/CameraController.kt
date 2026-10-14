@@ -340,14 +340,20 @@ class CameraController(
     }
 
     fun setTorch(on: Boolean) {
+        if (controls.torch == on) return
         controls.torch = on
+        val id = cameraId ?: chooseCameraId(front)
         if (session != null) {
-            // Trong lúc streaming: setTorchMode() bị CAMERA_IN_USE, phải dùng
-            // FLASH_MODE_TORCH trong repeating request.
+            // Một số HAL có xu hướng tắt torch tự động khi request preview được rebuild
+            // nhiều lần. Chúng ta vẫn giữ state yêu cầu và chỉ cập nhật lại preview
+            // nếu state thật sự thay đổi để tránh nháy đèn do lặp vô ích.
             Log.i(TAG, "setTorch(in-session) on=$on")
             updateRepeating()
+            if (id != null) {
+                runCatching { manager.setTorchMode(id, on) }
+                    .onFailure { Log.w(TAG, "setTorchMode fallback failed", it) }
+            }
         } else {
-            val id = cameraId ?: chooseCameraId(front)
             if (id == null) {
                 Log.w(TAG, "setTorch on=$on but no camera id")
                 return

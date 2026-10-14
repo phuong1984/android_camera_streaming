@@ -17,6 +17,7 @@ class SettingsStore(context: Context) {
         autostart = prefs.getBoolean("autostart", false),
         keepWarm = prefs.getBoolean("keepWarm", false),
         idleGraceSeconds = prefs.getInt("idleGraceSeconds", 15),
+        frontCamera = prefs.getBoolean("frontCamera", false),
     )
 
     fun save(c: StreamConfig) {
@@ -30,6 +31,7 @@ class SettingsStore(context: Context) {
             .putBoolean("autostart", c.autostart)
             .putBoolean("keepWarm", c.keepWarm)
             .putInt("idleGraceSeconds", c.idleGraceSeconds)
+            .putBoolean("frontCamera", c.frontCamera)
             .apply()
     }
 

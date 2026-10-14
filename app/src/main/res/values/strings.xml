@@ -14,6 +14,8 @@
     <string name="camera_rear">Sau</string>
     <string name="camera_front">Trước</string>
     <string name="permission_needed">Cần quyền Camera và Thông báo</string>
+    <string name="permission_rationale">App cần quyền Camera để mở luồng stream và quyền Thông báo để hiển thị trạng thái streaming ở nền. Bạn có thể cấp quyền ngay hoặc mở cài đặt ứng dụng nếu đã từ chối.</string>
+    <string name="open_settings">Mở cài đặt</string>
     <string name="battery_opt">Miễn tối ưu pin</string>
     <string name="open_autostart">Mở cài đặt autostart</string>
     <string name="notification_channel">Streaming camera</string>
