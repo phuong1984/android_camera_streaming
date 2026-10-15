@@ -43,12 +43,12 @@ if (hasSigningConfiguration && signingStoreFile?.isFile != true) {
 
 android {
     namespace = "com.bapi.ipcamera"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.bapi.ipcamera"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -98,6 +98,9 @@ android {
     }
 
     testOptions {
+        unitTests.all {
+            it.jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+        }
         unitTests.isIncludeAndroidResources = true
     }
 }
