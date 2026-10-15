@@ -60,7 +60,6 @@ class StreamingService : Service(), StreamControlHandler {
         acquireWakeLock()
         when (intent?.action) {
             ACTION_FLASH -> onControl(ControlAction.SetFlash(intent.getBooleanExtra(EXTRA_ON, false)))
-            ACTION_NIGHT -> onControl(ControlAction.SetNight(intent.getBooleanExtra(EXTRA_ON, false)))
             ACTION_SWITCH -> onControl(
                 ControlAction.SetCameraFront(intent.getBooleanExtra(EXTRA_FRONT, false))
             )
@@ -197,11 +196,6 @@ class StreamingService : Service(), StreamControlHandler {
                 }
                 camera.applyControl(ControlAction.SetFlash(shouldEnable))
                 StreamState.torchOn.postValue(shouldEnable)
-            }
-
-            is ControlAction.SetNight -> {
-                camera.applyControl(action)
-                StreamState.notifyNight(action.on)
             }
 
             is ControlAction.SetCameraFront -> {
@@ -349,7 +343,6 @@ class StreamingService : Service(), StreamControlHandler {
         }
 
         fun setFlash(context: Context, on: Boolean) = send(context, ACTION_FLASH, EXTRA_ON, on)
-        fun setNight(context: Context, on: Boolean) = send(context, ACTION_NIGHT, EXTRA_ON, on)
         fun switchCamera(context: Context, front: Boolean) =
             send(context, ACTION_SWITCH, EXTRA_FRONT, front)
 
@@ -366,7 +359,6 @@ class StreamingService : Service(), StreamControlHandler {
         }
 
         const val ACTION_FLASH = "com.bapi.ipcamera.FLASH"
-        const val ACTION_NIGHT = "com.bapi.ipcamera.NIGHT"
         const val ACTION_SWITCH = "com.bapi.ipcamera.SWITCH"
         const val ACTION_APPLY_CONFIG = "com.bapi.ipcamera.APPLY_CONFIG"
         const val EXTRA_ON = "on"

@@ -35,7 +35,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceChangeListener { pref, newValue ->
                 val port = (newValue as? String)?.toIntOrNull()
                 if (port == null || port !in 1024..65535) {
-                    toast("Cổng phải trong khoảng 1024..65535 (không root)")
+                    toast(getString(R.string.port_invalid))
                     return@setOnPreferenceChangeListener false
                 }
                 pref.summary = port.toString()
@@ -146,7 +146,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 )
             )
         } catch (_: Throwable) {
-            toast("Không mở được cài đặt autostart trên máy này")
+            toast(getString(R.string.autostart_open_failed))
         }
     }
 

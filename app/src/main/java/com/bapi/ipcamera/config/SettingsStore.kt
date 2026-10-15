@@ -2,6 +2,7 @@ package com.bapi.ipcamera.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.bapi.ipcamera.Language
 
 class SettingsStore(context: Context) {
     private val prefs: SharedPreferences =
@@ -43,5 +44,12 @@ class SettingsStore(context: Context) {
 
     fun savePreviewEnabled(enabled: Boolean) {
         prefs.edit().putBoolean("previewEnabled", enabled).apply()
+    }
+
+    fun loadLanguage(): String =
+        prefs.getString("language", Language.DEFAULT) ?: Language.DEFAULT
+
+    fun saveLanguage(tag: String) {
+        prefs.edit().putString("language", tag).apply()
     }
 }

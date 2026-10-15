@@ -15,7 +15,7 @@ class CapabilitiesTest {
                 CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT,
                 CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT,
             ),
-            sceneModes = intArrayOf(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT),
+            sceneModes = intArrayOf(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT),
             effects = intArrayOf(CameraCharacteristics.CONTROL_EFFECT_MODE_MONO),
             hasFlash = true,
             minExposureComp = -2,
@@ -39,9 +39,10 @@ class CapabilitiesTest {
     @Test
     fun sceneAndEffectNames() {
         assertEquals(
-            CaptureRequest.CONTROL_SCENE_MODE_NIGHT,
-            CameraControls.sceneNameToValue("night")
+            CaptureRequest.CONTROL_SCENE_MODE_PORTRAIT,
+            CameraControls.sceneNameToValue("portrait")
         )
+        assertNull(CameraControls.sceneNameToValue("night"))
         assertEquals(
             CaptureRequest.CONTROL_EFFECT_MODE_SEPIA,
             CameraControls.effectNameToValue("sepia")

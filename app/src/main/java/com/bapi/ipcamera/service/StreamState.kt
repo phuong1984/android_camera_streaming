@@ -10,7 +10,6 @@ object StreamState {
     val clients = MutableLiveData(0)
     val address = MutableLiveData("")
     val torchOn = MutableLiveData(false)
-    val nightMode = MutableLiveData(false)
     val frontCamera = MutableLiveData(false)
 
     /** Preview trong app đang bật → giữ camera sống dù không có client HTTP. */
@@ -30,10 +29,6 @@ object StreamState {
 
     fun notifyAddress(value: String) {
         address.postValue(value)
-    }
-
-    fun notifyNight(value: Boolean) {
-        nightMode.postValue(value)
     }
 
     fun observeClients(): LiveData<Int> = clients

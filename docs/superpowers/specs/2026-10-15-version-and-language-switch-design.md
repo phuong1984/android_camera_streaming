@@ -12,8 +12,8 @@ Trạng thái: Đã duyệt
 ## 2. Phạm vi
 
 - `TextView tvVersion` ở góc dưới-phải, hiển thị `"v" + versionName` (ví dụ `v1.0`).
-- Nút `btnLanguage` ở góc trên-phải: hiển thị **ngôn ngữ sẽ chuyển tới**
-  ("English" khi đang Việt, "Tiếng Việt" khi đang Anh); bấm để đổi.
+- Nút `btnLanguage` (ImageButton) ở góc trên-phải: hiển thị **cờ của ngôn ngữ sẽ
+  chuyển tới** (đang Việt → cờ Anh UK; đang Anh → cờ Việt Nam); bấm để đổi.
 - Bản địa hoá toàn bộ chuỗi giao diện app: màn hình chính + màn Cài đặt.
 - Ngôn ngữ được lưu bền, áp dụng lại khi mở app.
 
@@ -34,20 +34,24 @@ appcompat 1.7.0). Đây là nguồn duy nhất lưu locale và **tự lưu qua c
 
 - Thêm `App : Application` (đăng ký trong manifest). Trong `onCreate`, nếu
   `AppCompatDelegate.getApplicationLocales()` trống → đặt Tiếng Việt (`vi`).
-- `btnLanguage`:
-  - Nhãn = ngôn ngữ sẽ chuyển tới: dùng `Language.labelRes(current)` trả về
-    `R.string.language_english` / `R.string.language_vietnamese`.
-  - Bấm → `AppCompatDelegate.setApplicationLocales(next(current))`. Activity tự recreate.
+- `btnLanguage` (ImageButton):
+  - Hình = cờ của ngôn ngữ sẽ chuyển tới: `Language.flagRes(current)` trả về
+    `R.drawable.flag_uk` (khi đang Việt) / `R.drawable.flag_vietnam` (khi đang Anh).
+  - Bấm → lưu lựa chọn vào `SettingsStore` rồi
+    `AppCompatDelegate.setApplicationLocales(next(current))`. Activity tự recreate.
 - Helper thuần `Language`:
   - `const val DEFAULT = "vi"`
   - `fun next(current: String): String` → `vi` ↔ `en`
-  - `fun labelRes(current: String): Int`
-- Đọc ngôn ngữ hiện tại từ `AppCompatDelegate.getApplicationLocales()`; nếu trống coi như `DEFAULT`.
+  - `fun flagRes(current: String): Int` → id drawable cờ của ngôn ngữ sẽ chuyển tới
+- Nguồn dữ liệu ngôn ngữ là `SettingsStore.loadLanguage()/saveLanguage()` (mặc định `vi`),
+  vì per-app locale của AppCompat không lưu bền trên một số máy (đã gặp trên Android 11).
+  AppCompat chỉ giữ vai trò áp dụng cấu hình/tài nguyên.
 
 ## 5. Tài nguyên
 
-- `values/strings.xml`: Tiếng Việt (mặc định) — thêm `language_english` ("English"),
-  `language_vietnamese` ("Tiếng Việt"). Chuỗi version không cần bản địa hoá.
+- `values/strings.xml`: Tiếng Việt (mặc định) — thêm `language_switch` (mô tả nút).
+  Chuỗi version không cần bản địa hoá.
+- `drawable/flag_uk.xml`, `drawable/flag_vietnam.xml`: vector cờ cho nút ngôn ngữ.
 - `values-en/strings.xml`: bản dịch Tiếng Anh cho **toàn bộ** chuỗi app.
 - Bản địa hoá màn Cài đặt:
   - `preferences.xml`: chuyển các tiêu đề/mô tả hardcode → `@string`.
@@ -66,6 +70,6 @@ appcompat 1.7.0). Đây là nguồn duy nhất lưu locale và **tự lưu qua c
 
 - `LanguageTest`: `next("vi")=="en"`, `next("en")=="vi"`, `next(unknown)=="en"` (an toàn).
 - `AppVersionTest`: `label("1.0")=="v1.0"`, `label(null)=="v"`, `label("")=="v"`.
-- `ActivitySmokeTest`: `tvVersion` hiển thị đúng `"v"+versionName`; `btnLanguage` tồn tại
-  với nhãn đúng theo ngôn ngữ hiện tại; bấm nút đổi locale `vi` → `en`.
+- `ActivitySmokeTest`: `tvVersion` hiển thị đúng `"v"+versionName`; `btnLanguage` hiện
+  đúng cờ theo ngôn ngữ hiện tại; bấm nút đổi lưu sang `en` và áp dụng locale `en`.
 - Các test cũ vẫn phải xanh.

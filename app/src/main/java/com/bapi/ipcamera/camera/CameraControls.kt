@@ -11,7 +11,6 @@ class CameraControls {
     var awbMode: Int? = null
     var sceneMode: Int? = null
     var effect: Int? = null
-    var night: Boolean = false
     var exposureComp: Int = 0
     /** 0..100, 50 = trung tính. Được map sang AE exposure compensation theo khả năng máy. */
     var brightness: Int = 50
@@ -20,14 +19,14 @@ class CameraControls {
     var torch: Boolean = false
 
     fun applyTo(builder: CaptureRequest.Builder, exposureCompValue: Int) {
-        if (night || sceneMode != null) {
+        if (sceneMode != null) {
             builder.set(
                 CaptureRequest.CONTROL_MODE,
                 CaptureRequest.CONTROL_MODE_USE_SCENE_MODE
             )
             builder.set(
                 CaptureRequest.CONTROL_SCENE_MODE,
-                if (night) CaptureRequest.CONTROL_SCENE_MODE_NIGHT else sceneMode
+                sceneMode
             )
         } else {
             builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO)
@@ -49,7 +48,6 @@ class CameraControls {
             is ControlAction.SetAwb -> awbMode = Capabilities.awbValue(action.mode)
             is ControlAction.SetScene -> sceneMode = sceneNameToValue(action.mode)
             is ControlAction.SetEffect -> effect = effectNameToValue(action.mode)
-            is ControlAction.SetNight -> night = action.on
             is ControlAction.SetBrightness -> brightness = action.value.coerceIn(0, 100)
             is ControlAction.SetContrast -> contrast = action.value.coerceIn(0, 100)
             else -> {}
@@ -59,7 +57,6 @@ class CameraControls {
     companion object {
         fun sceneNameToValue(n: String): Int? = when (n.lowercase()) {
             "auto", "none" -> CaptureRequest.CONTROL_SCENE_MODE_DISABLED
-            "night" -> CaptureRequest.CONTROL_SCENE_MODE_NIGHT
             "sport", "sports" -> CaptureRequest.CONTROL_SCENE_MODE_SPORTS
             "portrait" -> CaptureRequest.CONTROL_SCENE_MODE_PORTRAIT
             "landscape" -> CaptureRequest.CONTROL_SCENE_MODE_LANDSCAPE

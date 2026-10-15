@@ -5,6 +5,10 @@ build/
 
 # Local machine config (sdk path)
 local.properties
+keystore/
+keystore.properties
+*.jks
+*.keystore
 
 # Android Studio / IntelliJ
 .idea/

@@ -13,8 +13,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import com.bapi.ipcamera.config.SettingsStore
 import com.bapi.ipcamera.databinding.ActivityMainBinding
 import com.bapi.ipcamera.service.StreamState
@@ -46,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         StreamState.frontCamera.value = store.load().frontCamera
         bindUiState()
         setupPreview()
+        setupVersionAndLanguage()
         requestPermissionsIfNeeded()
 
         binding.btnToggle.setOnClickListener {
@@ -70,11 +73,6 @@ class MainActivity : AppCompatActivity() {
             StreamState.torchOn.value = checked
             StreamingService.setFlash(this, checked)
         }
-        binding.swNight.setOnCheckedChangeListener { _, checked ->
-            if (StreamState.nightMode.value == checked) return@setOnCheckedChangeListener
-            StreamState.nightMode.value = checked
-            StreamingService.setNight(this, checked)
-        }
         binding.btnSwitchCamera.setOnClickListener {
             val front = !(StreamState.frontCamera.value ?: false)
             StreamState.frontCamera.value = front
@@ -93,7 +91,7 @@ class MainActivity : AppCompatActivity() {
             val url = "http://$addr/stream"
             val clipboard = getSystemService(android.content.ClipboardManager::class.java)
             clipboard?.setPrimaryClip(android.content.ClipData.newPlainText("ip_camera_url", url))
-            Toast.makeText(this, "URL copied: $url", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.url_copied, url), Toast.LENGTH_SHORT).show()
         }
 
         StreamState.running.observe(this) { running ->
@@ -116,17 +114,6 @@ class MainActivity : AppCompatActivity() {
         }
         StreamState.torchOn.observe(this) { enabled ->
             updateFlashUi(enabled, StreamState.frontCamera.value == true)
-        }
-        StreamState.nightMode.observe(this) { enabled ->
-            if (binding.swNight.isChecked != enabled) {
-                binding.swNight.setOnCheckedChangeListener(null)
-                binding.swNight.isChecked = enabled
-                binding.swNight.setOnCheckedChangeListener { _, checked ->
-                    if (StreamState.nightMode.value == checked) return@setOnCheckedChangeListener
-                    StreamState.nightMode.value = checked
-                    StreamingService.setNight(this, checked)
-                }
-            }
         }
         StreamState.frontCamera.observe(this) { front ->
             updateCameraUi(front)
@@ -239,13 +226,27 @@ class MainActivity : AppCompatActivity() {
         val front = StreamState.frontCamera.value ?: false
         updateCameraUi(front)
         binding.swFlash.isChecked = StreamState.torchOn.value ?: false
-        binding.swNight.isChecked = StreamState.nightMode.value ?: false
     }
+
+    private fun setupVersionAndLanguage() {
+        binding.tvVersion.text = AppVersion.label(BuildConfig.VERSION_NAME)
+        updateLanguageButton()
+        binding.btnLanguage.setOnClickListener {
+            val next = Language.next(currentLanguage())
+            store.saveLanguage(next)
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(next))
+        }
+    }
+
+    private fun updateLanguageButton() {
+        binding.btnLanguage.setImageResource(Language.flagRes(currentLanguage()))
+    }
+
+    private fun currentLanguage(): String = store.loadLanguage()
 
     private fun updateCameraUi(front: Boolean) {
         binding.btnSwitchCamera.text =
-            getString(R.string.switch_camera) + " (" +
-                getString(if (front) R.string.camera_front else R.string.camera_rear) + ")"
+            getString(if (front) R.string.switch_to_rear else R.string.switch_to_front)
     }
 
     private fun updateFlashUi(torchOn: Boolean, frontCamera: Boolean) {

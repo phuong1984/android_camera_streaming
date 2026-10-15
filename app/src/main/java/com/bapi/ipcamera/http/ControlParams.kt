@@ -9,7 +9,6 @@ sealed interface ControlAction {
     data class SetAwb(val mode: String) : ControlAction
     data class SetScene(val mode: String) : ControlAction
     data class SetEffect(val mode: String) : ControlAction
-    data class SetNight(val on: Boolean) : ControlAction
     data class SetBrightness(val value: Int) : ControlAction
     data class SetContrast(val value: Int) : ControlAction
 }
@@ -29,7 +28,6 @@ object ControlParams {
             "wb" -> ControlAction.SetAwb(raw)
             "env" -> ControlAction.SetScene(raw)
             "effect" -> ControlAction.SetEffect(raw)
-            "night" -> ControlAction.SetNight(b)
             "brightness" -> raw.toIntOrNull()?.let { ControlAction.SetBrightness(it) }
             "contrast" -> raw.toIntOrNull()?.let { ControlAction.SetContrast(it) }
             else -> null

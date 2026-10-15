@@ -63,4 +63,17 @@ class SettingsStoreTest {
         store.savePreviewEnabled(false)
         assertEquals(false, store.loadPreviewEnabled())
     }
+
+    @Test
+    fun language_defaultsToVietnamese() {
+        assertEquals("vi", store.loadLanguage())
+    }
+
+    @Test
+    fun language_save_thenLoad_roundTrips() {
+        store.saveLanguage("en")
+        assertEquals("en", store.loadLanguage())
+        store.saveLanguage("vi")
+        assertEquals("vi", store.loadLanguage())
+    }
 }

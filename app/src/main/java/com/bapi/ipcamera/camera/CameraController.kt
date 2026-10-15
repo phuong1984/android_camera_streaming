@@ -15,7 +15,6 @@ import android.os.HandlerThread
 import android.util.Log
 import android.util.Range
 import android.util.Size
-import android.view.OrientationEventListener
 import android.view.Surface
 import com.bapi.ipcamera.config.StreamConfig
 import com.bapi.ipcamera.http.ControlAction
@@ -41,21 +40,12 @@ class CameraController(
 
     private val manager =
         context.applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    private val appContext = context.applicationContext
 
     /**
-     * Góc xoay thiết bị hiện tại (0/90/180/270) theo gia tốc kế, giống app chụp ảnh
-     * (vẫn đúng khi khoá xoay màn hình).
+     * Ứng dụng bị khoá ở chế độ dọc (portrait) nên hướng ảnh luôn cố định = 0,
+     * không phụ thuộc việc xoay điện thoại.
      */
-    @Volatile
-    private var deviceOrientationDeg: Int = 0
-
-    private val orientationListener = object : OrientationEventListener(appContext) {
-        override fun onOrientationChanged(orientation: Int) {
-            if (orientation == ORIENTATION_UNKNOWN) return
-            onDeviceOrientation(snapOrientation(orientation))
-        }
-    }
+    private val deviceOrientationDeg: Int = 0
 
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
@@ -110,16 +100,7 @@ class CameraController(
         this.front = front
         thread = HandlerThread("camera-thread").also { it.start() }
         handler = Handler(thread!!.looper)
-        runCatching { orientationListener.enable() }
         openInternal()
-    }
-
-    /** Thiết bị đổi hướng -> cập nhật lại hướng ảnh đang stream ngay lập tức. */
-    private fun onDeviceOrientation(deg: Int) {
-        if (deg == deviceOrientationDeg) return
-        deviceOrientationDeg = deg
-        Log.i(TAG, "device orientation -> $deg")
-        if (session != null) updateRepeating()
     }
 
     private fun openInternal() {
@@ -395,14 +376,21 @@ class CameraController(
     fun stop() {
         Log.w(TAG, "stop (was running=$isRunning)")
         isRunning = false
-        runCatching { orientationListener.disable() }
         runCatching { session?.close() }
         runCatching { device?.close() }
         runCatching { reader?.close() }
         // Đóng phiên trước để nhả đèn; sau đó tắt torch qua API như phương án dự phòng.
+        // Lưu ý: camera có thể chưa từng mở (không có client/preview) nên `cameraId`
+        // vẫn null trong khi torch đã bật qua setTorchMode → phải phân giải id tương tự setTorch.
         if (controls.torch) {
-            val id = cameraId
-            if (id != null) runCatching { manager.setTorchMode(id, false) }
+            val id = cameraId ?: chooseCameraId(front)
+            if (id != null) {
+                Log.i(TAG, "setTorchMode id=$id on=false")
+                runCatching { manager.setTorchMode(id, false) }
+                    .onFailure { Log.e(TAG, "setTorchMode(false) failed", it) }
+            } else {
+                Log.w(TAG, "cannot turn off torch: no camera id")
+            }
             controls.torch = false
         }
         session = null
